@@ -1,0 +1,70 @@
+version: "3.9"
+
+services:
+
+  redis_service_default:
+    container_name: redis_service_default
+    build:
+      context: ./
+    restart: unless-stopped
+    depends_on:
+      - redis_nc_1
+      - redis_nc_1_replica
+    ports:
+      - 8010:8010
+    networks:
+      - redis
+
+  redis_service_prod:
+    container_name: redis_service_prod
+    build:
+      context: ./
+    restart: unless-stopped
+    depends_on:
+      - redis_nc_1
+      - redis_nc_1_replica
+    environment:
+      - "SPRING_PROFILES_ACTIVE=prod"
+    ports:
+      - 8011:8011
+    networks:
+      - redis
+
+  redis_service_test:
+    container_name: redis_service_test
+    build:
+      context: ./
+    restart: unless-stopped
+    depends_on:
+      - redis_nc_1
+      - redis_nc_1_replica
+    environment:
+      - "SPRING_PROFILES_ACTIVE=test"
+    ports:
+      - 8012:8012
+    networks:
+      - redis
+
+  redis_nc_1:
+    container_name: redis_nc_1
+    image: redis:latest
+    restart: unless-stopped
+    ports:
+      - 6010:6379
+    networks:
+      - redis
+
+  redis_nc_1_replica:
+    container_name: redis_nc_1_replica
+    image: redis:latest
+    ports:
+      - 6011:6379
+    command: redis-server --slaveof redis_nc_1 6379
+    depends_on:
+      - redis_nc_1
+    networks:
+      - redis
+
+networks:
+  redis:
+    driver: bridge

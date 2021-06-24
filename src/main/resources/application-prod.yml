@@ -1,0 +1,5 @@
+app:
+  redis-db-index: 1
+
+server:
+  port: 8011

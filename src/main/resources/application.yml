@@ -1,0 +1,10 @@
+app:
+  redis-db-index: 0
+
+server:
+  port: 8010
+
+spring:
+  redis:
+    host: redis_nc_1 # use localhost if run without docker
+    port: 6379
